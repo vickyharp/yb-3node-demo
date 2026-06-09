@@ -1,0 +1,26 @@
+{
+  "name": "YugabyteDB Demo Cluster",
+  "dockerComposeFile": "docker-compose.yml",
+  "service": "devenv",
+  "workspaceFolder": "/workspace",
+  "features": {
+    "ghcr.io/devcontainers/features/github-cli:1": {}
+  },
+  "postCreateCommand": "bash /workspace/.devcontainer/postCreate.sh",
+  "postStartCommand": "bash /workspace/scripts/wait-for-cluster.sh",
+  "forwardPorts": [7000, 9000, 5433, 15433],
+  "portsAttributes": {
+    "7000": { "label": "YB Master UI", "onAutoForward": "silent" },
+    "9000": { "label": "YB TServer UI (node 1)", "onAutoForward": "silent" },
+    "5433": { "label": "YSQL (PostgreSQL wire)", "onAutoForward": "silent" },
+    "15433": { "label": "yugabyted UI", "onAutoForward": "openBrowser" }
+  },
+  "customizations": {
+    "vscode": {
+      "extensions": ["ms-ossdata.vscode-postgresql"],
+      "settings": {
+        "terminal.integrated.defaultProfile.linux": "bash"
+      }
+    }
+  }
+}
