@@ -1,3 +1,5 @@
+name: yb-3node-demo
+
 services:
   yb-node1:
     image: yugabytedb/yugabyte:latest
@@ -70,6 +72,8 @@ services:
       start_period: 30s
     depends_on:
       yb-node1:
+        condition: service_healthy
+      yb-node2:
         condition: service_healthy
     networks:
       - yb-net

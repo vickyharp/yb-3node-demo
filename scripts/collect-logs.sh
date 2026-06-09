@@ -7,6 +7,11 @@ set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 PROJECT_DIR="$(dirname "$SCRIPT_DIR")"
+# shellcheck source=compose-lib.sh
+source "$SCRIPT_DIR/compose-lib.sh"
+
+require_docker
+
 TIMESTAMP="$(date +%Y%m%d_%H%M%S)"
 NOTE="${1:-}"
 BUNDLE_NAME="bundle_${TIMESTAMP}${NOTE:+_${NOTE// /_}}"
@@ -21,19 +26,18 @@ for n in 1 2 3; do
   mkdir -p "$NODE_DIR/tserver" "$NODE_DIR/master"
 
   echo "  node${n}: TServer logs..."
-  docker compose -f "$PROJECT_DIR/docker-compose.yml" cp \
+  compose_cmd cp \
     "yb-node${n}:/root/var/data/yb-data/tserver/logs/." "$NODE_DIR/tserver/" 2>/dev/null \
     || echo "  node${n}: TServer logs unavailable (node down?)"
 
   echo "  node${n}: Master logs..."
-  docker compose -f "$PROJECT_DIR/docker-compose.yml" cp \
+  compose_cmd cp \
     "yb-node${n}:/root/var/data/yb-data/master/logs/." "$NODE_DIR/master/" 2>/dev/null \
     || echo "  node${n}: Master logs unavailable (node down?)"
 done
 
 echo "  Docker Compose log stream..."
-docker compose -f "$PROJECT_DIR/docker-compose.yml" logs \
-  yb-node1 yb-node2 yb-node3 > "$BUNDLE_DIR/docker-compose.log" 2>&1 \
+compose_cmd logs yb-node1 yb-node2 yb-node3 > "$BUNDLE_DIR/docker-compose.log" 2>&1 \
   || echo "  Docker Compose log stream unavailable"
 
 echo ""

@@ -1,13 +1,14 @@
+name: yb-3node-demo
+
 services:
   devenv:
     build:
       context: .
       dockerfile: Dockerfile
     command: sleep infinity
-    env_file:
-      - .env
     volumes:
       - ..:/workspace:cached
+      - /var/run/docker.sock:/var/run/docker.sock
     networks:
       - yb-net
 
@@ -82,6 +83,8 @@ services:
       start_period: 30s
     depends_on:
       yb-node1:
+        condition: service_healthy
+      yb-node2:
         condition: service_healthy
     networks:
       - yb-net
