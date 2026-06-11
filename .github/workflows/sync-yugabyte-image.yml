@@ -34,29 +34,8 @@ jobs:
         run: |
           docker buildx imagetools create -t "$TARGET_IMAGE" "$SOURCE_IMAGE"
 
-      - name: Link package to repository
+      - name: Remind about one-time visibility setup
         run: |
-          gh api --method PUT \
-            -H "Accept: application/vnd.github+json" \
-            -H "X-GitHub-Api-Version: 2022-11-28" \
-            "/users/${{ github.repository_owner }}/packages/container/${{ github.event.repository.name }}/repositories/${{ github.event.repository.id }}"
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Make package public
-        run: |
-          # /user/packages/... 404s under GITHUB_TOKEN; use /users/{owner}/packages/...
-          for attempt in 1 2 3 4 5; do
-            if gh api --method PATCH \
-              -H "Accept: application/vnd.github+json" \
-              -H "X-GitHub-Api-Version: 2022-11-28" \
-              "/users/${{ github.repository_owner }}/packages/container/${{ github.event.repository.name }}" \
-              -f visibility='public'; then
-              exit 0
-            fi
-            echo "Package not visible to API yet (attempt ${attempt}/5), retrying in 10s..."
-            sleep 10
-          done
-          exit 1
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          echo "::notice::Image pushed to GHCR. If this is the first sync, make the package public once:"
+          echo "::notice::https://github.com/users/vickyharp/packages/container/yb-3node-demo/settings"
+          echo "::notice::Package settings → Change visibility → Public"
