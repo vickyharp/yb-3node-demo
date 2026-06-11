@@ -2,7 +2,7 @@ name: yb-3node-demo
 
 services:
   yb-node1:
-    image: yugabytedb/yugabyte:latest
+    image: ghcr.io/vickyharp/yb-3node-demo:latest
     command:
       - /home/yugabyte/bin/yugabyted
       - start
@@ -29,7 +29,7 @@ services:
       - yb-net
 
   yb-node2:
-    image: yugabytedb/yugabyte:latest
+    image: ghcr.io/vickyharp/yb-3node-demo:latest
     command:
       - /home/yugabyte/bin/yugabyted
       - start
@@ -53,7 +53,7 @@ services:
       - yb-net
 
   yb-node3:
-    image: yugabytedb/yugabyte:latest
+    image: ghcr.io/vickyharp/yb-3node-demo:latest
     command:
       - /home/yugabyte/bin/yugabyted
       - start
